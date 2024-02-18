@@ -101,8 +101,6 @@ module.exports = function socketFun(socket, io) {
 
             await existingChat.save();
 
-
-
             io.to(data.roomId.toString()).emit("getMessage", { ...data, new_msg: true });
 
             acknowledgement(data);

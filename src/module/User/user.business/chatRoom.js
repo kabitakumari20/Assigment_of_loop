@@ -1,23 +1,8 @@
-const mongoose = require("mongoose");
-const express = require("express")
 const { User, ChatRoom, Message } = require("../../User/user.model/user.model");
-const { secrectKey } = require("../../../../secretKey");
-const CryptoJS = require("crypto-js");
-const bcrypt = require("bcrypt");
-const routes = express.Router();
-const jwt = require("jsonwebtoken");
-const { authenticate } = require("../../../middleware/authmiddleware");
-const { addListener } = require("nodemon");
-// Client-side WebSocket connection
-const { socketFun } = require("../../../socket/chatSocket")
 const WebSocket = require('ws');
 const { Socket } = require("socket.io");
 const Io = require("socket.io");
-// const socket = new WebSocket('ws://your-server-url');//
 const socket = new WebSocket('ws://localhost:5000');//localhost:5000
-
-
-
 const createChatRoom = async (user, body) => {
     // try {
     console.log("body=====>>", body);
