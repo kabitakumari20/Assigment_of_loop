@@ -53,6 +53,32 @@ const fetchChatRooms = async (user) => {
 
 
 
+const getChatRoomsByUser = async (user) => {
+    try {
+        // Check if the provided userId exists in any chat room
+        let userId = user._id
+        const chatRooms = await ChatRoom.find({ members: { $in: [userId] } });
+
+        if (chatRooms.length === 0) {
+            return {
+                msg: "User not found in any chat room",
+                count: 0,
+                result: []
+            };
+        }
+
+        return {
+            msg: "Ok",
+            count: chatRooms.length,
+            result: chatRooms
+        };
+    } catch (error) {
+        console.error('Error fetching chat rooms:', error);
+        throw ({ error: 'Internal server error' });
+    }
+};
+
+
 
 
 const joinChatRoom = async (user, body) => {
@@ -110,8 +136,9 @@ const leaveChatRoom = async (user, body) => {
 
 
 module.exports = {
+    getChatRoomsByUser,
     fetchChatRooms,
     createChatRoom,
     joinChatRoom,
-    leaveChatRoom, 
+    leaveChatRoom,
 }

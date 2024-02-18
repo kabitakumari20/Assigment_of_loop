@@ -19,7 +19,6 @@ const route = require("./routes");
 app.use(express.static(publicDirectoryPath));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/Stripe/webhook', bodyParser.raw({ type: "*/*" }));
 
 route.map((route) => {
   app.use(route.path, route.handler);
@@ -35,8 +34,14 @@ server.listen(port, () => {
     console.log(`Server started at ${port}`);
 });
 
-
+// console.log("server=====>>",server)
+// console.log("app=======>>",app)
 require('./src/socket/socket')(server, app)
+// let count=0
+// setInterval(function(){
+//   io.emit("msg-to-client","client","tets msg"+count);
+//   count++
+// },1000)
 
 
 

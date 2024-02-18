@@ -17,35 +17,6 @@ const Io = require("socket.io");
 const socket = new WebSocket('ws://localhost:5000');//localhost:5000
 
 
-// // Event listener for WebSocket connection established
-// socket.addEventListener('open', function (event) {
-//     console.log('WebSocket connection established');
-// });
-
-// // // Event listener for WebSocket messages
-// socket.addEventListener('message', function (event) {
-//     console.log('Message from server:', event.data);
-//     // Update UI with the received message
-//     updateChatUI(event.data);
-// });
-
-// // // Function to send a message to the server
-// function sendMessage(message) {
-//     socket.send(JSON.stringify(message));
-// }
-
-// Example usage:
-// sendMessage({ chatId: '123', content: 'Hello, world!' });
-
-
-// For generating jwt auth token
-var generateAuthToken = user => {
-    return new Promise((resolve, reject) => {
-        let token = jwt.sign({ _id: user._id.toString() }, secrectKey)//.toString();
-        resolve(token);
-    });
-};
-
 
 
 

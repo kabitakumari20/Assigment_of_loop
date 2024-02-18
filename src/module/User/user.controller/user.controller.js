@@ -2,7 +2,7 @@ const{register,login,getUserByToken,
     }=require("../user.business/user.business");
 
 const {fetchChatRooms,
-    joinChatRoom,
+    joinChatRoom,getChatRoomsByUser,
     leaveChatRoom,
     createChatRoom,sendMessage,
     findAndChatInChatRoom}=require("../user.business/chatRoom")
@@ -10,6 +10,8 @@ const {fetchChatRooms,
 exports.register=async(req)=>await register(req.body);
 exports.login=async(req)=>await login(req.body);
 exports.fetchChatRooms=async(req)=>await fetchChatRooms(req.user,req.body)
+exports.getChatRoomsByUser=async(req)=>await getChatRoomsByUser(req.user)//
+
 exports.joinChatRoom=async(req)=>await joinChatRoom(req.user,req.body)//,leaveChatRoom
 exports.leaveChatRoom=async(req)=>await leaveChatRoom(req.user,req.body)//,
 exports.createChatRoom=async(req)=>await createChatRoom(req.user,req.body)
