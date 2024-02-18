@@ -14,7 +14,7 @@ exports.joinChatRoom=async(req)=>await joinChatRoom(req.user,req.body)//,leaveCh
 exports.leaveChatRoom=async(req)=>await leaveChatRoom(req.user,req.body)//,
 exports.createChatRoom=async(req)=>await createChatRoom(req.user,req.body)
 exports.getUserByToken=async(req)=>await getUserByToken(req.user);
-exports.findAndChatInChatRoom=async(req)=>await findAndChatInChatRoom(req.user,req.body)
-exports.sendMessage = async (req) => await sendMessage(req.user, req.body, req.io);
+// exports.findAndChatInChatRoom=async(req)=>await findAndChatInChatRoom(req.user,req.body)
+// exports.sendMessage = async (req) => await sendMessage(req.user, req.body, req.io);
 
 

@@ -14,8 +14,8 @@ router.get("/fetchChatRooms",authenticate,wrapAsync(fetchChatRooms))//
 router.post("/joinChatRoom",authenticate,wrapAsync(joinChatRoom))
 router.post("/leaveChatRoom",authenticate,wrapAsync(leaveChatRoom))
 router.post("/createChatRoom",authenticate,wrapAsync(createChatRoom))
-router.post("/findAndChatInChatRoom",authenticate,wrapAsync(findAndChatInChatRoom))
-router.post('/sendMessage', authenticate, wrapAsync(sendMessage));
+// router.post("/findAndChatInChatRoom",authenticate,wrapAsync(findAndChatInChatRoom))
+// router.post('/sendMessage', authenticate, wrapAsync(sendMessage));
 
 
 
