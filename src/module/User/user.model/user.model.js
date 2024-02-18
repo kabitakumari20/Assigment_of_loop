@@ -46,7 +46,7 @@ UserSchema.statics.findByToken = function (token, res) {
 };
 
 
-const messageSchema = new mongoose.Schema({
+const messagesSchema = new mongoose.Schema({
     type: {
         type: String,
         enum: ['text', 'image'],
@@ -57,8 +57,32 @@ const messageSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    content: String, // For text messages
-    imageUrl: String, // For image messages
+
+    roomId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ChatRoom',
+    },
+    isOnline: {
+        type: Boolean,
+        
+        default:false
+    },
+    msg: String,
+    imageUrl: String,
+    timestamp: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+const messageSchema = new mongoose.Schema({
+
+    roomId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ChatRoom"
+
+    },
+    message: [messagesSchema],
     timestamp: {
         type: Date,
         default: Date.now
@@ -66,25 +90,25 @@ const messageSchema = new mongoose.Schema({
 });
 
 const chatRoomSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
-        required: true 
+    name: {
+        type: String,
+        required: true
     },
     description: String,
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    members:[],
-    messages: [messageSchema]
-    // Add other properties as needed
+    members: [],
+
 }, {
     timestamps: true,
     versionKey: false,
 });
 
 
-const Chat = new mongoose.model("Chat", chatRoomSchema);
+const ChatRoom = new mongoose.model("ChatRoom", chatRoomSchema);
 // module.exports = { User }
+const Message = new mongoose.model("Message", messageSchema)
 const User = new mongoose.model("User", UserSchema);
-module.exports = { User, Chat }
+module.exports = { User, ChatRoom, Message }
