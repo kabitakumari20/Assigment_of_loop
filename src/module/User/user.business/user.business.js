@@ -12,9 +12,15 @@ const { addListener } = require("nodemon");
 const { socketFun } = require("../../../socket/chatSocket")
 const WebSocket = require('ws');
 const { Socket } = require("socket.io");
-const Io = require("socket.io");
+// const io = require("socket.io");
+
 // const socket = new WebSocket('ws://your-server-url');//
-const socket = new WebSocket('ws://localhost:5000');//localhost:5000
+// const socket = new WebSocket('ws://localhost:5000');//localhost:5000
+
+
+const io = require('socket.io-client');
+const socket = io('http://localhost:5000');
+
 
 
 

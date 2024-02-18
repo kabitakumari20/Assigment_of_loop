@@ -64,8 +64,8 @@ const messagesSchema = new mongoose.Schema({
     },
     isOnline: {
         type: Boolean,
-        
-        default:false
+
+        default: false
     },
     msg: String,
     imageUrl: String,
@@ -100,6 +100,18 @@ const chatRoomSchema = new mongoose.Schema({
         ref: "User"
     },
     members: [],
+    onlineMembers: [
+        {
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            },
+            status: {
+                type: Boolean,
+                default: false
+            }
+        }
+    ]
 
 }, {
     timestamps: true,

@@ -1,22 +1,58 @@
 
 const { Message, User, ChatRoom } = require("../module/User/user.model/user.model");
 const mongoose = require("mongoose")
+const onlineUsers = new Map();
+
 module.exports = function socketFun(socket, io) {
+    // socket.on('joinSocket', async (data, acknowledgement) => {
+
+    //     console.log("customersocket----------", data)
+    //     socket.roomId = data.roomId;
+    //     try {
+    //         if (data.roomId) {
+    //             socket.join(data.roomId);
+    //             if (!onlineUsers.has(data.roomId)) {
+    //                 onlineUsers.set(data.roomId, []);
+    //             }
+    //             onlineUsers.get(data.roomId).push(data.senderId);
+    //             io.to(data.roomId).emit('userJoined', data.senderId);
+    //             io.to(data.roomId).emit('onlineUsers', onlineUsers.get(data.roomId));
+    //             console.log("customer socket join", data.roomId);
+    //         }
+    //         acknowledgement(data);
+    //     }
+    //     catch (err) {
+    //         console.log("erorororor---------", err)
+    //         acknowledgement(data);
+    //     }
+    // });
     socket.on('joinSocket', async (data, acknowledgement) => {
         console.log("customersocket----------", data)
         socket.roomId = data.roomId;
         try {
             if (data.roomId) {
                 socket.join(data.roomId);
+                const chatRoom = await ChatRoom.findById(data.roomId);
+                if (!chatRoom) {
+                    throw new Error("Chat room not found");
+                }
+                // Update the onlineMembers field in the chat room
+                // chatRoom.onlineMembers.push(data.senderId);
+                chatRoom.onlineMembers.push({ user: data.senderId, status: true });
+                await chatRoom.save();
+                // Emit events to inform clients about the user join and updated online users list
+                io.to(data.roomId).emit('userJoined', data.senderId);
+                io.to(data.roomId).emit('onlineUsers', chatRoom.onlineMembers);
                 console.log("customer socket join", data.roomId);
             }
             acknowledgement(data);
-        }
-        catch (err) {
-            console.log("erorororor---------", err)
-            acknowledgement(data);
+        } catch (err) {
+            console.log("error: ", err.message);
+            acknowledgement({ error: err.message });
         }
     });
+    
+    
     socket.on("sendMessage", async function (data, acknowledgement) {
         try {
             console.log("New Message---------", data);
@@ -81,20 +117,49 @@ module.exports = function socketFun(socket, io) {
         acknowledgement(existingChat)
     });
 
-    socket.on('exitSocket', async (data, acknowledgement) => {
+    // socket.on('userleftSocket', async (data, acknowledgement) => {
+    //     console.log("customersocket----------", data)
+    //     socket.roomId = data.roomId;
+    //     try {
+    //         if (data.roomId) {
+    //             socket.join(data.roomId);
+    //             console.log("customer exits from socket", data.roomId);
+    //         }
+    //         acknowledgement(data);
+    //     }
+    //     catch (err) {
+    //         console.log("erorororor---------", err)
+    //         acknowledgement(data);
+    //     }
+    // });
+
+
+    socket.on('userleftSocket', async (data, acknowledgement) => {
         console.log("customersocket----------", data)
         socket.roomId = data.roomId;
         try {
             if (data.roomId) {
-                socket.join(data.roomId);
-                console.log("customer exits from socket", data.roomId);
+                const chatRoom = await ChatRoom.findById(data.roomId);
+                if (!chatRoom) {
+                    throw new Error("Chat room not found");
+                }
+                // Find the user's entry in the onlineMembers array
+                const userIndex = chatRoom.onlineMembers.findIndex(member => member.user.equals(data.senderId));
+                if (userIndex !== -1) {
+                    // Update the status to false
+                    chatRoom.onlineMembers[userIndex].status = false;
+                    await chatRoom.save();
+                    // Emit events to inform clients about the user leaving and updated online users list
+                    io.to(data.roomId).emit('userleft', data.senderId);
+                    io.to(data.roomId).emit('offlineUsers', chatRoom.onlineMembers);
+                    console.log("customer socket left", data.roomId);
+                }
             }
             acknowledgement(data);
-        }
-        catch (err) {
-            console.log("erorororor---------", err)
-            acknowledgement(data);
+        } catch (err) {
+            console.log("error: ", err.message);
+            acknowledgement({ error: err.message });
         }
     });
-
+    
 }

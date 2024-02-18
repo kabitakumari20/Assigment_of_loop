@@ -34,14 +34,9 @@ server.listen(port, () => {
     console.log(`Server started at ${port}`);
 });
 
-// console.log("server=====>>",server)
-// console.log("app=======>>",app)
+
 require('./src/socket/socket')(server, app)
-// let count=0
-// setInterval(function(){
-//   io.emit("msg-to-client","client","tets msg"+count);
-//   count++
-// },1000)
+
 
 
 
