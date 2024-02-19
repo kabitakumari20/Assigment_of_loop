@@ -1,26 +1,3 @@
-
-
-// const { User } = require("../module/User/user.model/user.model")
-// // const { msg } = require("../../config/message"),
-//   const { errorHandler } = require("../helper/errorHandling.helper");
-
-// exports.authenticate = async (req, res, next) => {
-//     try {
-//       const auth = req.header("Authorization");
-//       if (!auth) throw message.msg.unauthorisedRequest;
-//       const token = auth.substr(auth.indexOf(" ") + 1);
-//       // console.log('hii');
-//       const user = await User.findByToken(token, res);
-//       req.user = user;
-//       if (!user) throw message.msg.unauthorisedRequest;
-//       return next();
-//     } catch (err) {
-//       const error = errorHandler(err, 401);
-//       return res.status(error.status).send(error);
-//     }
-//   };
-
-
 const mongoose = require("mongoose");
 const { User } = require("../module/User/user.model/user.model");
 const { secrectKey } = require("../../secretKey");
