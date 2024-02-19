@@ -21,11 +21,6 @@ const { Socket } = require("socket.io");
 const io = require('socket.io-client');
 const socket = io('http://localhost:5000');
 
-
-
-
-
-
 const register = async (body) => {
     try {
         const existingUser = await User.findOne({ email: body.email });
@@ -47,7 +42,6 @@ const register = async (body) => {
         console.log("error----------------->>", error);
     }
 }
-
 
 const login = async (body) => {
     try {
@@ -80,12 +74,6 @@ const getUserByToken = async (user) => {
         result: findUser
     }
 }
-
-
-
-
-
-
 
 module.exports = {
     register, login, getUserByToken
