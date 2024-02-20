@@ -26,6 +26,8 @@ module.exports = function socketFun(socket, io) {
     //         acknowledgement(data);
     //     }
     // });
+
+
     socket.on('joinSocket', async (data, acknowledgement) => {
         console.log("customersocket----------", data)
         socket.roomId = data.roomId;
@@ -159,5 +161,25 @@ module.exports = function socketFun(socket, io) {
             acknowledgement({ error: err.message });
         }
     });
+
+    socket.on('onlineUsers', async (data, acknowledgement) => {
+        // socket.on("onlineUsers", () => {
+            chatRoom.find({_id:data.roomId, "onlineMembers.status": true }, (err, res) => {
+                if (chatRoom) {
+                    io.to(data.roomId).emit('onlineUser', chatRoom.onlineMembers);
+                }
+            })
+
+        })
+
+     socket.on('oflineUsers', async (data, acknowledgement) => {
+        // socket.on("oflineUsers", () => {
+            chatRoom.find({_id:data.roomId, "onlineMembers.status": false }, (err, res) => {
+                if (chatRoom) {
+                    io.to(data.roomId).emit('oflineUsers', chatRoom.onlineMembers);
+                }
+            })
+
+        })
     
 }
