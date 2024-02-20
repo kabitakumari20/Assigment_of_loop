@@ -4,32 +4,35 @@ const mongoose = require("mongoose")
 const onlineUsers = new Map();
 
 module.exports = function socketFun(socket, io) {
-    // socket.on('joinSocket', async (data, acknowledgement) => {
 
+    // socket.on('joinSocket', async (data, acknowledgement) => {
     //     console.log("customersocket----------", data)
     //     socket.roomId = data.roomId;
     //     try {
     //         if (data.roomId) {
     //             socket.join(data.roomId);
-    //             if (!onlineUsers.has(data.roomId)) {
-    //                 onlineUsers.set(data.roomId, []);
+    //             const chatRoom = await ChatRoom.findById(data.roomId);
+    //             if (!chatRoom) {
+    //                 throw new Error("Chat room not found");
     //             }
-    //             onlineUsers.get(data.roomId).push(data.senderId);
+    //             // Update the onlineMembers field in the chat room
+    //             // chatRoom.onlineMembers.push(data.senderId);
+    //             chatRoom.onlineMembers.push({ user: data.senderId, status: true });
+    //             await chatRoom.save();
+    //             // Emit events to inform clients about the user join and updated online users list
     //             io.to(data.roomId).emit('userJoined', data.senderId);
-    //             io.to(data.roomId).emit('onlineUsers', onlineUsers.get(data.roomId));
+    //             io.to(data.roomId).emit('onlineUsers', chatRoom.onlineMembers);
     //             console.log("customer socket join", data.roomId);
     //         }
     //         acknowledgement(data);
-    //     }
-    //     catch (err) {
-    //         console.log("erorororor---------", err)
-    //         acknowledgement(data);
+    //     } catch (err) {
+    //         console.log("error: ", err.message);
+    //         acknowledgement({ error: err.message });
     //     }
     // });
 
-
     socket.on('joinSocket', async (data, acknowledgement) => {
-        console.log("customersocket----------", data)
+        console.log("customersocket----------", data);
         socket.roomId = data.roomId;
         try {
             if (data.roomId) {
@@ -38,9 +41,15 @@ module.exports = function socketFun(socket, io) {
                 if (!chatRoom) {
                     throw new Error("Chat room not found");
                 }
-                // Update the onlineMembers field in the chat room
-                // chatRoom.onlineMembers.push(data.senderId);
-                chatRoom.onlineMembers.push({ user: data.senderId, status: true });
+                // Check if the user already exists in the onlineMembers array
+                const userIndex = chatRoom.onlineMembers.findIndex(member => member.user.equals(data.senderId));
+                if (userIndex === -1) {
+                    // If user does not exist, add them to the onlineMembers array
+                    chatRoom.onlineMembers.push({ user: data.senderId, status: true });
+                } else {
+                    // If user exists, update only the status to true
+                    chatRoom.onlineMembers[userIndex].status = true;
+                }
                 await chatRoom.save();
                 // Emit events to inform clients about the user join and updated online users list
                 io.to(data.roomId).emit('userJoined', data.senderId);
@@ -53,8 +62,9 @@ module.exports = function socketFun(socket, io) {
             acknowledgement({ error: err.message });
         }
     });
-    
-    
+
+
+
     socket.on("sendMessage", async function (data, acknowledgement) {
         try {
             console.log("New Message---------", data);
@@ -117,25 +127,9 @@ module.exports = function socketFun(socket, io) {
         acknowledgement(existingChat)
     });
 
-    // socket.on('userleftSocket', async (data, acknowledgement) => {
-    //     console.log("customersocket----------", data)
-    //     socket.roomId = data.roomId;
-    //     try {
-    //         if (data.roomId) {
-    //             socket.join(data.roomId);
-    //             console.log("customer exits from socket", data.roomId);
-    //         }
-    //         acknowledgement(data);
-    //     }
-    //     catch (err) {
-    //         console.log("erorororor---------", err)
-    //         acknowledgement(data);
-    //     }
-    // });
-
 
     socket.on('userleftSocket', async (data, acknowledgement) => {
-        console.log("customersocket----------", data)
+        console.log("customersocket----------", data);
         socket.roomId = data.roomId;
         try {
             if (data.roomId) {
@@ -143,13 +137,12 @@ module.exports = function socketFun(socket, io) {
                 if (!chatRoom) {
                     throw new Error("Chat room not found");
                 }
-                // Find the user's entry in the onlineMembers array
+     
                 const userIndex = chatRoom.onlineMembers.findIndex(member => member.user.equals(data.senderId));
                 if (userIndex !== -1) {
-                    // Update the status to false
+          
                     chatRoom.onlineMembers[userIndex].status = false;
                     await chatRoom.save();
-                    // Emit events to inform clients about the user leaving and updated online users list
                     io.to(data.roomId).emit('userleft', data.senderId);
                     io.to(data.roomId).emit('offlineUsers', chatRoom.onlineMembers);
                     console.log("customer socket left", data.roomId);
@@ -162,24 +155,37 @@ module.exports = function socketFun(socket, io) {
         }
     });
 
+
+
     socket.on('onlineUsers', async (data, acknowledgement) => {
-        // socket.on("onlineUsers", () => {
-            chatRoom.findOne({_id:data.roomId, "onlineMembers.status": true }, (err, res) => {
-                if (chatRoom) {
-                    io.to(data.roomId).emit('onlineUser', chatRoom.onlineMembers);
-                }
-            })
+        try {
+            const chatRoom = await ChatRoom.findOne({ _id: data.roomId, "onlineMembers.status": true });
+            if (chatRoom) {
+                io.to(data.roomId).emit('onlineUser', chatRoom.onlineMembers);
+                acknowledgement(chatRoom)
 
-        })
+            }
+        } catch (error) {
+            console.error(error);
+            // Handle error appropriately
+        }
+    });
 
-     socket.on('oflineUsers', async (data, acknowledgement) => {
-        // socket.on("oflineUsers", () => {
-            chatRoom.findOne({_id:data.roomId, "onlineMembers.status": false }, (err, res) => {
-                if (chatRoom) {
-                    io.to(data.roomId).emit('oflineUsers', chatRoom.onlineMembers);
-                }
-            })
 
-        })
-    
+    socket.on('oflineUsers', async (data, acknowledgement) => {
+        try {
+            const chatRoom = await ChatRoom.findOne({ _id: data.roomId, "onlineMembers.status": false });
+            if (chatRoom) {
+                io.to(data.roomId).emit('oflineUsers', chatRoom.onlineMembers);
+                acknowledgement(chatRoom)
+
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+  
+
+
 }
