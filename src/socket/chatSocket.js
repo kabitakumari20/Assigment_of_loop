@@ -164,7 +164,7 @@ module.exports = function socketFun(socket, io) {
 
     socket.on('onlineUsers', async (data, acknowledgement) => {
         // socket.on("onlineUsers", () => {
-            chatRoom.find({_id:data.roomId, "onlineMembers.status": true }, (err, res) => {
+            chatRoom.findOne({_id:data.roomId, "onlineMembers.status": true }, (err, res) => {
                 if (chatRoom) {
                     io.to(data.roomId).emit('onlineUser', chatRoom.onlineMembers);
                 }
@@ -174,7 +174,7 @@ module.exports = function socketFun(socket, io) {
 
      socket.on('oflineUsers', async (data, acknowledgement) => {
         // socket.on("oflineUsers", () => {
-            chatRoom.find({_id:data.roomId, "onlineMembers.status": false }, (err, res) => {
+            chatRoom.findOne({_id:data.roomId, "onlineMembers.status": false }, (err, res) => {
                 if (chatRoom) {
                     io.to(data.roomId).emit('oflineUsers', chatRoom.onlineMembers);
                 }
