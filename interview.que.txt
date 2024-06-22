@@ -91,5 +91,6 @@ which we refer to as hoisting. Only the declaration is hoisted
 
 if we have one arry of object and in one object we have arry of object that we are using .$unwind it will be saprate one use records
 
-
+14) how you can compaire Object
+while using are-objects-equals npm we can comare are object
 
