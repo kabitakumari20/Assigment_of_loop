@@ -53,9 +53,7 @@ console.log(areObjectsEquals(obj1, obj2));
 
 
 
-
-
-9) What is a prototype in JavaScript?
+9) What is a prototype chain in JavaScript?
 Every object in JavaScript has a built-in property, which is called its prototype. The prototype is 
 itself an object, so the prototype will have its own prototype, making what's
  called a prototype chain. The chain ends when we reach a prototype that has null for its own prototype.
@@ -64,8 +62,34 @@ itself an object, so the prototype will have its own prototype, making what's
 10) What is the difference between Microtask and Macrotask? ( माइक्रोटास्क और मैक्रोटास्क में क्या अंतर है? )
 
 
-The main difference between microtask and macrotask queue is their priority. The event loop always gives higher priority to the microtask queue, and will process all the callbacks in the microtask queue before moving on to the macrotask queue.
+The main difference between microtask and macrotask queue is their priority. The event loop 
+always gives higher priority to the microtask queue, and will process all the callbacks in 
+the microtask queue before moving on to the macrotask queue.
 
-The microtask queue contains the callbacks of operations that are considered more urgent or important, such as promises and mutation observers APIs.
+
+The microtask queue contains the callbacks of operations that are considered more urgent or 
+important, such as promises and mutation observers APIs.
 
 The macrotask queue contains the callbacks of operations that are less urgent such as timers, I/O events, and user interface events.
+
+
+
+11) What is closure
+A closure in JavaScript is a function that has access to variables in its parent scope, even after 
+the parent function has returned. Closures are created when a function is defined inside another
+ function, and the inner function retains access to the variables in the outer function's scope.
+
+
+12) What is hoisting in JavaScript
+hosting is a bydefault behaviour of javascrit and its working with car and regular function
+Variables declared or initialized with the var keyword will have their declaration "moved" up to the 
+top of their containing scope during compilation, 
+which we refer to as hoisting. Only the declaration is hoisted
+
+
+13) wait is the work of .$unwind in aggragation ?
+
+if we have one arry of object and in one object we have arry of object that we are using .$unwind it will be saprate one use records
+
+
+
