@@ -6,6 +6,33 @@ Promise.allSettled() =>  Promise.allSettled() its heandling all asynchronus opra
 2) what is Currying function (करी function)
  Currying in JavaScript is a process in which you can transform a function with multiple arguments into a sequence of nesting functions
 It returns a new function that expects the next argument inline
+ex:- of firstversion
+const curry = (a,d) => {
+    return (b) => {
+        return (c) => {
+            return a + b + c +d;
+        }
+    }
+}
+
+console.log(curry(2,8)(2)(2)); 
+
+
+// Second Version: Flexible and Dynamic Arity============
+
+const curry = (fn, ...args) => {
+    return (...newArgs) => {
+        const allArgs = [...args, ...newArgs];
+        if (allArgs.length >= fn.length) {
+            return fn(...allArgs);
+        }
+        return curry(fn, ...allArgs);
+    };
+};
+
+const sum = (a, b, c) => a + b + c;
+const curriedSum = curry(sum);
+
 
 3) What is the difference between HAVING and WHERE in SQL?
 The WHERE clause in SQL allows you to filter data from specific rows (individual rows) from a table based on certain conditions. In contrast
